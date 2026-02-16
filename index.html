@@ -1,0 +1,914 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Investment Dashboard</title>
+
+    <!-- Tailwind CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  </head>
+
+  <body class="bg-slate-100 font-sans">
+    <!-- ================= LOGIN SCREEN ================= -->
+    <div
+      id="loginScreen"
+      class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 to-indigo-700 p-6"
+    >
+      <div class="bg-white w-full max-w-md rounded-xl shadow-2xl p-8">
+        <h2 class="text-3xl font-bold text-center text-gray-800 mb-6">
+          Investor Login
+        </h2>
+
+        <input
+          id="loginEmail"
+          type="email"
+          placeholder="Email"
+          class="w-full p-3 mb-4 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <input
+          id="loginPassword"
+          type="password"
+          placeholder="Password"
+          class="w-full p-3 mb-6 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+
+        <p
+          id="loginError"
+          class="hidden text-sm text-rose-600 mb-4"
+        >
+          Invalid email or password.
+        </p>
+
+        <button
+          onclick="login()"
+          class="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg transition"
+        >
+          Login
+        </button>
+      </div>
+    </div>
+
+    <!-- ================= DASHBOARD ================= -->
+    <div id="dashboard" class="hidden">
+      <!-- NAVBAR -->
+      <nav
+        class="bg-white/90 backdrop-blur border-b border-slate-200 sticky top-0 z-10"
+      >
+        <div
+          class="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex items-center gap-3"
+        >
+          <div class="flex items-center gap-3">
+            <img
+              src="logo.jpeg"
+              alt="Investa Nexus Pro logo"
+              class="h-8 w-8 sm:h-9 sm:w-9 rounded-xl object-contain bg-white border border-slate-200"
+            />
+            <h1 class="text-lg sm:text-xl font-bold text-slate-800">
+              Investa Nexus Pro
+            </h1>
+          </div>
+        </div>
+      </nav>
+
+      <div
+        class="max-w-7xl mx-auto px-6 py-6 grid lg:grid-cols-[260px_1fr] gap-6"
+      >
+        <!-- SIDE BAR -->
+        <aside
+          class="bg-white rounded-2xl shadow-sm border border-slate-200 p-5 h-fit lg:sticky lg:top-24 hidden lg:block"
+        >
+          <div class="flex items-center gap-3 mb-6">
+            <div class="h-10 w-10 rounded-full bg-slate-200"></div>
+            <div>
+              <p class="text-sm text-slate-500">Portfolio</p>
+              <p class="font-semibold text-slate-800">Growth Strategy</p>
+            </div>
+          </div>
+
+          <nav class="space-y-2 text-sm">
+            <button
+              data-target="overview"
+              class="sidebar-btn w-full text-left px-3 py-2 rounded-lg bg-slate-100 text-slate-800 font-semibold"
+            >
+              Overview
+            </button>
+            <button
+              data-target="holdings"
+              class="sidebar-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600"
+            >
+              Holdings
+            </button>
+            <button
+              data-target="performance"
+              class="sidebar-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600"
+            >
+              Performance
+            </button>
+            <button
+              data-target="goals"
+              class="sidebar-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600"
+            >
+              Goals
+            </button>
+            <button
+              data-target="insights"
+              class="sidebar-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600"
+            >
+              Insights
+            </button>
+            <button
+              data-target="settings"
+              class="sidebar-btn w-full text-left px-3 py-2 rounded-lg hover:bg-slate-100 text-slate-600"
+            >
+              Settings
+            </button>
+          </nav>
+
+          <div class="mt-6 p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <p class="text-xs text-slate-500">Account</p>
+            <p class="font-semibold text-slate-800">Mark Leatherman</p>
+            <button
+              onclick="logout()"
+              class="mt-3 w-full text-sm py-2 rounded-lg border border-slate-200 hover:bg-white text-rose-600"
+            >
+              Logout
+            </button>
+          </div>
+
+          <div
+            class="mt-6 p-4 rounded-xl bg-gradient-to-br from-slate-900 to-slate-700 text-white"
+          >
+            <p class="text-xs opacity-80">Cash Available</p>
+            <p class="text-2xl font-bold">$120,400</p>
+            <button  id="confirmTransfer"
+              class="mt-3 w-full bg-white/20 hover:bg-white/30 text-white text-sm py-2 rounded-lg"
+            >
+              Transfer
+            </button>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT -->
+        <main class="space-y-6 pb-20 lg:pb-0">
+          <div class="lg:hidden bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <div class="flex items-center justify-between">
+              <div>
+                <p class="text-xs text-slate-500">Account</p>
+                <p class="font-semibold text-slate-800">Mark Leatherman</p>
+              </div>
+              <button
+                onclick="logout()"
+                class="text-sm px-3 py-2 rounded-lg border border-slate-200 text-rose-600"
+              >
+                Logout
+              </button>
+            </div>
+          </div>
+          <!-- OVERVIEW -->
+          <div id="overview" class="dashboard-section space-y-6">
+            <!-- KPI CARDS -->
+            <section class="grid md:grid-cols-3 gap-4">
+              <div
+                class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <p class="text-sm text-slate-500">Initial Investment</p>
+                <p class="text-3xl font-bold text-emerald-600">$9,450</p>
+                <p class="text-xs text-emerald-600 mt-1"></p>
+              </div>
+
+              <div
+                class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <p class="text-sm text-slate-500">Interest Earned</p>
+                <p class="text-3xl font-bold text-blue-600">$201,470</p>
+                <p class="text-xs text-slate-500 mt-1"></p>
+              </div>
+              <div
+                class="bg-white p-5 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <p class="text-sm text-slate-500">Total Value</p>
+                <p class="text-3xl font-bold text-emerald-600">$210,920</p>
+                <p class="text-xs text-emerald-600 mt-1">+4.8% this month</p>
+              </div>
+            </section>
+
+            <!-- CHARTS -->
+            <section class="grid lg:grid-cols-3 gap-6">
+              <div
+                class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2"
+              >
+                <h2 class="font-bold text-lg mb-4">
+                  Market Trend (AAPL, TSLA, AMZN)
+                </h2>
+                <canvas id="lineChart"></canvas>
+              </div>
+              <div
+                class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <h2 class="font-bold text-lg mb-4">Asset Allocation</h2>
+                <canvas id="pieChart"></canvas>
+                <div class="mt-4 text-sm text-slate-500 space-y-1">
+                  <div class="flex justify-between">
+                    <span>Stocks</span><span>50%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Crypto</span><span>20%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>Bonds</span><span>15%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>ETFs</span><span>15%</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ADDITIONAL SECTIONS -->
+            <section class="grid lg:grid-cols-3 gap-6">
+              <div
+                class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2"
+              >
+                <h2 class="font-bold text-lg mb-4">Recent Transactions</h2>
+                <div class="overflow-x-auto">
+                  <table class="w-full text-left text-sm">
+                    <thead>
+                      <tr class="border-b text-slate-500">
+                        <th class="py-2">Date</th>
+                        <th>Asset</th>
+                        <th>Type</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                      </tr>
+                    </thead>
+                    <tbody class="text-slate-700">
+                      <tr class="border-b">
+                        <td class="py-3">Feb 12</td>
+                        <td>AAPL</td>
+                        <td class="text-emerald-600">Buy</td>
+                        <td>$2,500</td>
+                        <td class="text-emerald-600">Completed</td>
+                      </tr>
+                      <tr class="border-b">
+                        <td class="py-3">Feb 10</td>
+                        <td>TSLA</td>
+                        <td class="text-rose-600">Sell</td>
+                        <td>$1,200</td>
+                        <td class="text-emerald-600">Completed</td>
+                      </tr>
+                      <tr>
+                        <td class="py-3">Feb 08</td>
+                        <td>AMZN</td>
+                        <td class="text-emerald-600">Buy</td>
+                        <td>$3,000</td>
+                        <td class="text-amber-500">Pending</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div
+                class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200"
+              >
+                <h2 class="font-bold text-lg mb-4">Watchlist</h2>
+                <div class="space-y-3 text-sm">
+                  <div class="flex justify-between">
+                    <span>NVDA</span>
+                    <span class="text-emerald-600">+2.4%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>MSFT</span>
+                    <span class="text-emerald-600">+1.1%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>GOOGL</span>
+                    <span class="text-rose-600">-0.6%</span>
+                  </div>
+                  <div class="flex justify-between">
+                    <span>META</span>
+                    <span class="text-emerald-600">+0.9%</span>
+                  </div>
+                </div>
+                
+              </div>
+            </section>
+          </div>
+
+          <!-- HOLDINGS -->
+          <section
+            id="holdings"
+            class="dashboard-section bg-white p-6 rounded-2xl shadow-sm border border-slate-200"
+          >
+            <div class="flex items-center justify-between mb-4">
+              <h2 class="font-bold text-lg">Holdings</h2>
+              <button
+                class="text-sm px-3 py-1 rounded-lg border border-slate-200 hover:bg-slate-50"
+              >
+                Export
+              </button>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-left text-sm">
+                <thead>
+                  <tr class="border-b text-slate-500">
+                    <th class="py-2">Asset</th>
+                    <th>Ticker</th>
+                    <th>Units</th>
+                    <th>Avg Cost</th>
+                    <th>Value</th>
+                    <th>Day</th>
+                  </tr>
+                </thead>
+                <tbody class="text-slate-700">
+                  <tr class="border-b">
+                    <td class="py-3">Apple</td>
+                    <td>AAPL</td>
+                    <td>38</td>
+                    <td>$162.10</td>
+                    <td>$7,030</td>
+                    <td class="text-emerald-600">+1.2%</td>
+                  </tr>
+                  <tr class="border-b">
+                    <td class="py-3">Tesla</td>
+                    <td>TSLA</td>
+                    <td>12</td>
+                    <td>$210.40</td>
+                    <td>$2,940</td>
+                    <td class="text-rose-600">-0.8%</td>
+                  </tr>
+                  <tr class="border-b">
+                    <td class="py-3">Amazon</td>
+                    <td>AMZN</td>
+                    <td>22</td>
+                    <td>$124.50</td>
+                    <td>$3,190</td>
+                    <td class="text-emerald-600">+0.5%</td>
+                  </tr>
+                  <tr>
+                    <td class="py-3">S&P 500 ETF</td>
+                    <td>VOO</td>
+                    <td>14</td>
+                    <td>$362.00</td>
+                    <td>$5,150</td>
+                    <td class="text-emerald-600">+0.3%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+
+          <!-- PERFORMANCE -->
+          <section
+            id="performance"
+            class="dashboard-section grid lg:grid-cols-3 gap-6"
+          >
+            <div
+              class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2"
+            >
+              <h2 class="font-bold text-lg mb-4">Performance</h2>
+              <div class="grid md:grid-cols-3 gap-4 text-sm">
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <p class="text-slate-500">1M</p>
+                  <p class="text-2xl font-bold text-emerald-600">+2.1%</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <p class="text-slate-500">YTD</p>
+                  <p class="text-2xl font-bold text-emerald-600">+8.7%</p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <p class="text-slate-500">1Y</p>
+                  <p class="text-2xl font-bold text-emerald-600">+14.3%</p>
+                </div>
+              </div>
+              <div class="mt-4 text-sm text-slate-600">
+                Benchmark vs S&P 500:
+                <span class="text-emerald-600 font-semibold">+1.9%</span>
+              </div>
+            </div>
+            <div
+              class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200"
+            >
+              <h2 class="font-bold text-lg mb-4">Allocation Drift</h2>
+              <div class="space-y-3 text-sm">
+                <div class="flex justify-between">
+                  <span>Equities</span><span class="text-emerald-600">+3%</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Fixed Income</span
+                  ><span class="text-rose-600">-2%</span>
+                </div>
+                <div class="flex justify-between">
+                  <span>Alternatives</span
+                  ><span class="text-amber-600">+1%</span>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="grid lg:grid-cols-3 gap-6">
+            <div
+              id="goals"
+              class="dashboard-section bg-white p-6 rounded-2xl shadow-sm border border-slate-200"
+            >
+              <h2 class="font-bold text-lg mb-4">Goals</h2>
+              <div class="space-y-4 text-sm">
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span>Retirement Fund</span><span>68%</span>
+                  </div>
+                  <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-emerald-500 w-[68%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span>Home Down Payment</span><span>42%</span>
+                  </div>
+                  <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-blue-500 w-[42%]"></div>
+                  </div>
+                </div>
+                <div>
+                  <div class="flex justify-between mb-1">
+                    <span>Emergency Fund</span><span>90%</span>
+                  </div>
+                  <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div class="h-full bg-amber-500 w-[90%]"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div
+              id="insights"
+              class="dashboard-section bg-white p-6 rounded-2xl shadow-sm border border-slate-200 lg:col-span-2"
+            >
+              <h2 class="font-bold text-lg mb-4">Insights</h2>
+              <div class="grid md:grid-cols-2 gap-4 text-sm">
+                <div
+                  class="p-4 rounded-xl bg-emerald-50 border border-emerald-100"
+                >
+                  <p class="font-semibold text-emerald-700">
+                    Rebalance Suggested
+                  </p>
+                  <p class="text-emerald-700/80 mt-1">
+                    Crypto exposure above target by 3%.
+                  </p>
+                </div>
+                <div class="p-4 rounded-xl bg-blue-50 border border-blue-100">
+                  <p class="font-semibold text-blue-700">Dividend Incoming</p>
+                  <p class="text-blue-700/80 mt-1">
+                    AAPL dividend posts on Mar 01.
+                  </p>
+                </div>
+                <div class="p-4 rounded-xl bg-amber-50 border border-amber-100">
+                  <p class="font-semibold text-amber-700">Spending Alert</p>
+                  <p class="text-amber-700/80 mt-1">
+                    Your cash reserve dipped below $10k.
+                  </p>
+                </div>
+                <div class="p-4 rounded-xl bg-slate-50 border border-slate-200">
+                  <p class="font-semibold text-slate-700">Weekly Summary</p>
+                  <p class="text-slate-600 mt-1">
+                    Portfolio up 1.3% since last Monday.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- SETTINGS -->
+          <section
+            id="settings"
+            class="dashboard-section bg-white p-6 rounded-2xl shadow-sm border border-slate-200"
+          >
+            <h2 class="font-bold text-lg mb-4">Settings</h2>
+            <div class="grid md:grid-cols-2 gap-6 text-sm">
+              <div>
+                <label class="block text-slate-500 mb-1"
+                  >Default Currency</label
+                >
+                <select
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2"
+                >
+                  <option>USD</option>
+                  <option>EUR</option>
+                  <option>GBP</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-1">Time Horizon</label>
+                <select
+                  class="w-full border border-slate-200 rounded-lg px-3 py-2"
+                >
+                  <option>Long-term (5+ years)</option>
+                  <option>Medium-term (1-5 years)</option>
+                  <option>Short-term (&lt;1 year)</option>
+                </select>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-1">Notifications</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="rounded" checked />
+                    <span>Email alerts</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="rounded" checked />
+                    <span>Weekly summary</span>
+                  </label>
+                </div>
+              </div>
+              <div>
+                <label class="block text-slate-500 mb-1">Data Sharing</label>
+                <div class="space-y-2">
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="rounded" />
+                    <span>Share anonymized insights</span>
+                  </label>
+                  <label class="flex items-center gap-2">
+                    <input type="checkbox" class="rounded" />
+                    <span>Enable market tips</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div class="mt-6 flex gap-3">
+              <button
+                class="px-4 py-2 rounded-lg bg-slate-900 text-white text-sm"
+              >
+                Save Changes
+              </button>
+              <button
+                class="px-4 py-2 rounded-lg border border-slate-200 text-sm"
+              >
+                Reset
+              </button>
+            </div>
+          </section>
+        </main>
+      </div>
+
+      <!-- MOBILE FAB -->
+      <button
+        id="transferFab"
+        class="lg:hidden fixed bottom-20 right-5 h-14 w-14 rounded-full bg-slate-900 text-white shadow-lg flex items-center justify-center z-30"
+        aria-label="Open transfer"
+      >
+        <svg
+          class="h-6 w-6"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <path d="M12 5v14"></path>
+          <path d="M5 12h14"></path>
+        </svg>
+      </button>
+
+      <!-- MOBILE BOTTOM NAV -->
+      <nav
+        class="lg:hidden fixed bottom-0 inset-x-0 bg-white/95 backdrop-blur border-t border-slate-200 z-20"
+      >
+        <div class="max-w-7xl mx-auto px-4 py-2">
+          <div class="grid grid-cols-6 gap-2 text-xs text-slate-500">
+            <button
+              data-target="overview"
+              class="mobile-btn flex flex-col items-center gap-1 py-2 rounded-lg"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M3 12l9-9 9 9"></path>
+                <path d="M5 10v10h5v-6h4v6h5V10"></path>
+              </svg>
+              <span>Overview</span>
+            </button>
+            <button
+              data-target="holdings"
+              class="mobile-btn flex flex-col items-center gap-1 py-2 rounded-lg"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <rect x="3" y="4" width="18" height="6" rx="2"></rect>
+                <rect x="3" y="14" width="18" height="6" rx="2"></rect>
+              </svg>
+              <span>Holdings</span>
+            </button>
+            <button
+              data-target="performance"
+              class="mobile-btn flex flex-col items-center gap-1 py-2 rounded-lg"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M4 18h16"></path>
+                <path d="M7 15l3-3 3 2 4-5"></path>
+              </svg>
+              <span>Perf</span>
+            </button>
+            <button
+              data-target="goals"
+              class="mobile-btn flex flex-col items-center gap-1 py-2 rounded-lg"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <circle cx="12" cy="12" r="9"></circle>
+                <path d="M12 7v5l3 3"></path>
+              </svg>
+              <span>Goals</span>
+            </button>
+            <button
+              data-target="insights"
+              class="mobile-btn flex flex-col items-center gap-1 py-2 rounded-lg"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path
+                  d="M12 3a6 6 0 016 6c0 2.4-1.3 3.9-3 5l-1 3h-4l-1-3c-1.7-1.1-3-2.6-3-5a6 6 0 016-6z"
+                ></path>
+                <path d="M9 21h6"></path>
+              </svg>
+              <span>Ideas</span>
+            </button>
+            <button
+              data-target="settings"
+              class="mobile-btn flex flex-col items-center gap-1 py-2 rounded-lg"
+            >
+              <svg
+                class="h-5 w-5"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+              >
+                <path d="M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                <path
+                  d="M3 12l2.2-.4a6.7 6.7 0 01.6-1.4L4.6 8l2.3-2.3 2.2 1.2c.5-.2 1-.4 1.5-.5L11 4h2l.4 2.4c.5.1 1 .3 1.5.5l2.2-1.2L19.4 8l-1.2 2.2c.3.4.5.9.6 1.4L21 12l-2.2.4c-.1.5-.3 1-.6 1.4l1.2 2.2-2.3 2.3-2.2-1.2c-.5.2-1 .4-1.5.5L13 20h-2l-.4-2.4c-.5-.1-1-.3-1.5-.5l-2.2 1.2L4.6 16l1.2-2.2c-.3-.4-.5-.9-.6-1.4L3 12z"
+                ></path>
+              </svg>
+              <span>Settings</span>
+            </button>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <!-- TRANSFER MODAL -->
+    <div
+      id="transferModal"
+      class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"
+    >
+      <div class="max-w-md mx-auto mt-20 sm:mt-24 px-4">
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-5">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-bold text-lg">Transfer Funds</h3>
+            <button
+              id="closeTransfer"
+              class="h-8 w-8 rounded-full hover:bg-slate-100 flex items-center justify-center"
+              aria-label="Close transfer"
+            >
+              <svg
+                class="h-4 w-4"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path d="M6 6l12 12"></path>
+                <path d="M18 6l-12 12"></path>
+              </svg>
+            </button>
+          </div>
+          <div class="space-y-4 text-sm">
+            <div>
+              <label class="block text-slate-500 mb-1">From</label>
+              <select class="w-full border border-slate-200 rounded-lg px-3 py-2">
+                <option>Cash Account</option>
+                <option>Savings</option>
+                <option>External Bank</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">To</label>
+              <select class="w-full border border-slate-200 rounded-lg px-3 py-2">
+                <option>Bank Account</option>
+                <option>Crypto Wallet</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-slate-500 mb-1">Amount</label>
+              <input
+                type="number"
+                placeholder="0.00"
+                class="w-full border border-slate-200 rounded-lg px-3 py-2"
+              />
+            </div>
+          </div>
+          <div class="mt-5 flex gap-3">
+            <button
+              id="confirmTransfer"
+              class="flex-1 px-4 py-2 rounded-lg bg-slate-900 text-white text-sm"
+            >
+              Transfer
+            </button>
+            <button
+              id="cancelTransfer"
+              class="flex-1 px-4 py-2 rounded-lg border border-slate-200 text-sm"
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function login() {
+        const email = document.getElementById("loginEmail").value.trim();
+        const password = document.getElementById("loginPassword").value;
+        const loginError = document.getElementById("loginError");
+
+        if (
+          email === "Markleatherman2023@gmail.com" &&
+          password === "27/9043jkjop04"
+        ) {
+          loginError.classList.add("hidden");
+          document.getElementById("loginScreen").classList.add("hidden");
+          document.getElementById("dashboard").classList.remove("hidden");
+        } else {
+          loginError.classList.remove("hidden");
+        }
+      }
+
+      function logout() {
+        document.getElementById("dashboard").classList.add("hidden");
+        document.getElementById("loginScreen").classList.remove("hidden");
+      }
+
+      // Sidebar section toggling
+      const sidebarButtons = document.querySelectorAll(".sidebar-btn");
+      const mobileButtons = document.querySelectorAll(".mobile-btn");
+      const sections = document.querySelectorAll(".dashboard-section");
+      const transferModal = document.getElementById("transferModal");
+      const transferFab = document.getElementById("transferFab");
+      const closeTransfer = document.getElementById("closeTransfer");
+      const cancelTransfer = document.getElementById("cancelTransfer");
+      const confirmTransfer = document.getElementById("confirmTransfer");
+
+      function showSection(targetId) {
+        sections.forEach((el) => {
+          if (el.id === targetId) {
+            el.classList.remove("hidden");
+          } else {
+            el.classList.add("hidden");
+          }
+        });
+
+        sidebarButtons.forEach((btn) => {
+          if (btn.dataset.target === targetId) {
+            btn.classList.add(
+              "bg-slate-100",
+              "text-slate-800",
+              "font-semibold",
+            );
+            btn.classList.remove("text-slate-600");
+          } else {
+            btn.classList.remove(
+              "bg-slate-100",
+              "text-slate-800",
+              "font-semibold",
+            );
+            btn.classList.add("text-slate-600");
+          }
+        });
+
+        mobileButtons.forEach((btn) => {
+          if (btn.dataset.target === targetId) {
+            btn.classList.add("text-slate-900", "bg-slate-100");
+            btn.classList.remove("text-slate-500");
+          } else {
+            btn.classList.remove("text-slate-900", "bg-slate-100");
+            btn.classList.add("text-slate-500");
+          }
+        });
+      }
+
+      sidebarButtons.forEach((btn) => {
+        btn.addEventListener("click", () => showSection(btn.dataset.target));
+      });
+
+      mobileButtons.forEach((btn) => {
+        btn.addEventListener("click", () => showSection(btn.dataset.target));
+      });
+
+      showSection("overview");
+
+      function openTransfer() {
+        transferModal.classList.remove("hidden");
+      }
+
+      function closeTransferModal() {
+        transferModal.classList.add("hidden");
+      }
+
+      transferFab.addEventListener("click", openTransfer);
+      closeTransfer.addEventListener("click", closeTransferModal);
+      cancelTransfer.addEventListener("click", closeTransferModal);
+      confirmTransfer.addEventListener("click", () => {
+        alert(
+          "Please contact your agent to pay the disbursement charges before you can transfer out.",
+        );
+      });
+      transferModal.addEventListener("click", (e) => {
+        if (e.target === transferModal) closeTransferModal();
+      });
+
+      // Line Chart (Stock Trends)
+      const lineCtx = document.getElementById("lineChart").getContext("2d");
+      new Chart(lineCtx, {
+        type: "line",
+        data: {
+          labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
+          datasets: [
+            {
+              label: "AAPL",
+              data: [170, 172, 168, 175, 180, 178, 185],
+              borderColor: "#3b82f6",
+              fill: false,
+              tension: 0.4,
+            },
+            {
+              label: "TSLA",
+              data: [220, 225, 215, 230, 240, 235, 250],
+              borderColor: "#ef4444",
+              fill: false,
+              tension: 0.4,
+            },
+            {
+              label: "AMZN",
+              data: [130, 135, 132, 138, 142, 145, 150],
+              borderColor: "#10b981",
+              fill: false,
+              tension: 0.4,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: { position: "top" },
+          },
+        },
+      });
+
+      // Pie Chart (Asset Allocation)
+      const pieCtx = document.getElementById("pieChart").getContext("2d");
+      new Chart(pieCtx, {
+        type: "pie",
+        data: {
+          labels: ["Stocks", "Crypto", "Bonds", "ETFs"],
+          datasets: [
+            {
+              data: [50, 20, 15, 15],
+              backgroundColor: ["#3b82f6", "#f59e0b", "#10b981", "#8b5cf6"],
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+        },
+      });
+    </script>
+  </body>
+</html>
